@@ -57,7 +57,7 @@ void loop() {
     }
 
     // Insert a delay to keep the framerate modest
-    delay(1000 / FRAMES_PER_SECOND);
+    // delay(1000 / FRAMES_PER_SECOND);
 
     // Slowly cycle the "base color" through the rainbow
     EVERY_N_MILLISECONDS(10) {
