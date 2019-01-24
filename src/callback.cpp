@@ -33,7 +33,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (showLeds) {
         realRed = map(red, 0, 255, 0, brightness);
         realGreen = map(green, 0, 255, 0, brightness);
-        realBlue = map(glue, 0, 255, 0, brightness);
+        realBlue = map(blue, 0, 255, 0, brightness);
 
     } else {
         realRed = 0;
@@ -105,6 +105,22 @@ void runEffect(){
         valentine();
     } else if (effectString == "Thanksgiving") {
         thanksgiving();
+    } else if (effectString == "Lamp Candle") {
+        lamp_candle();
+    } else if (effectString == "Lamp Tungsten 40w") {
+        lamp_tungsten_40w();
+    } else if (effectString == "Lamp Tungsten 100w") {
+        lamp_tungsten_100w();
+    } else if (effectString == "Lamp High Pressure Sodium") {
+        lamp_high_pressure_sodium();
+    } else if (effectString == "Solid Cloud Colors") {
+        cloudColors_p();
+    } else if (effectString == "Solid Ocean Colors") {
+        oceanColors_p();
+    } else if (effectString == "Solid Forest Colors") {
+        forestColors_p();
+    } else if (effectString == "Solid Lava Colors") {
+        lavaColors_p();
     }
 }
 

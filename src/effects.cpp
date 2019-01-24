@@ -155,15 +155,15 @@ void temp2rgb(unsigned int kelvin) {
     
     // red 
     if (tmp_internal <= 66) {
-        Red = 255;
+        red = 255;
     } else {
         float tmp_red = 329.698727446 * pow(tmp_internal - 60, -0.1332047592);
         if (tmp_red < 0) {
-            Red = 0;
+            red = 0;
         } else if (tmp_red > 255) {
-            Red = 255;
+            red = 255;
         } else {
-            Red = tmp_red;
+            red = tmp_red;
         }
     }
     
@@ -171,36 +171,36 @@ void temp2rgb(unsigned int kelvin) {
     if (tmp_internal <=66){
         float tmp_green = 99.4708025861 * log(tmp_internal) - 161.1195681661;
         if (tmp_green < 0) {
-            Green = 0;
+            green = 0;
         } else if (tmp_green > 255) {
-            Green = 255;
+            green = 255;
         } else {
-            Green = tmp_green;
+            green = tmp_green;
         }
     } else {
         float tmp_green = 288.1221695283 * pow(tmp_internal - 60, -0.0755148492);
         if (tmp_green < 0) {
-            Green = 0;
+            green = 0;
         } else if (tmp_green > 255) {
-            Green = 255;
+            green = 255;
         } else {
-            Green = tmp_green;
+            green = tmp_green;
         }
     }
     
     // blue
     if (tmp_internal >=66) {
-        Blue = 255;
+        blue = 255;
     } else if (tmp_internal <= 19) {
-        Blue = 0;
+        blue = 0;
     } else {
         float tmp_blue = 138.5177312231 * log(tmp_internal - 10) - 305.0447927307;
         if (tmp_blue < 0) {
-            Blue = 0;
+            blue = 0;
         } else if (tmp_blue > 255) {
-            Blue = 255;
+            blue = 255;
         } else {
-            Blue = tmp_blue;
+            blue = tmp_blue;
         }
     }
 }
