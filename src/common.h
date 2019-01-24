@@ -12,9 +12,9 @@
 
 extern PubSubClient client;
 
-extern int Red;
-extern int Green;
-extern int Blue;
+extern int red;
+extern int green;
+extern int blue;
 
 extern int realRed;
 extern int realGreen;

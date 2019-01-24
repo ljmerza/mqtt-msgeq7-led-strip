@@ -21,9 +21,9 @@ const char* on_cmd = "ON";
 const char* off_cmd = "OFF";
 String effectString = "Solid";
 
-int Red = 10;
-int Green = 10;
-int Blue = 10;
+int red = 10;
+int green = 10;
+int blue = 10;
 
 int realRed = 0;
 int realGreen = 0;
@@ -38,6 +38,6 @@ void runLedLights(){
 
 String rgbString() {
     String rgb;
-    rgb = String(Red) + ',' + String(Green) + ',' + String(Blue);
+    rgb = String(red) + ',' + String(green) + ',' + String(blue);
     return rgb;
 }

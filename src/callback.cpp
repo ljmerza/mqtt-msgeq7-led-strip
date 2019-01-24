@@ -31,9 +31,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
 
     if (showLeds) {
-        realRed = map(Red, 0, 255, 0, brightness);
-        realGreen = map(Green, 0, 255, 0, brightness);
-        realBlue = map(Blue, 0, 255, 0, brightness);
+        realRed = map(red, 0, 255, 0, brightness);
+        realGreen = map(green, 0, 255, 0, brightness);
+        realBlue = map(glue, 0, 255, 0, brightness);
 
     } else {
         realRed = 0;
@@ -140,9 +140,9 @@ bool processJson(char* message) {
 
     // if we are cahnging color then do that
     if (root.containsKey("color")) {
-        Red = root["color"]["r"];
-        Green = root["color"]["g"];
-        Blue = root["color"]["b"];
+        red = root["color"]["r"];
+        green = root["color"]["g"];
+        blue = root["color"]["b"];
     }
     
     // if there's an effect given then do that

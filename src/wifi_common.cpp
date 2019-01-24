@@ -90,9 +90,9 @@ void sendState() {
 
   root["state"] = showLeds ? on_cmd : off_cmd;
   JsonObject& color = root.createNestedObject("color");
-  color["r"] = Red;
-  color["g"] = Green;
-  color["b"] = Blue;
+  color["r"] = red;
+  color["g"] = green;
+  color["b"] = blue;
 
   root["brightness"] = brightness;
   root["effect"] = effectString.c_str();
