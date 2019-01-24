@@ -1,0 +1,43 @@
+#include <Arduino.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+
+#include "common.h"
+#include "effects.h"
+#include "music_effects.h"
+
+uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
+WiFiClient wifiClient;
+PubSubClient client(wifiClient);
+
+bool showLeds = true;
+CRGB leds[NUM_LEDS];
+int brightness = 0;
+
+CMSGEQ7<MSGEQ7_SMOOTH, MSGEQ7_PIN_RESET, MSGEQ7_PIN_STROBE, MSGEQ7_PIN_ANALOG> MSGEQ7;
+
+const char* on_cmd = "ON";
+const char* off_cmd = "OFF";
+String effectString = "Solid";
+
+int Red = 10;
+int Green = 10;
+int Blue = 10;
+
+int realRed = 0;
+int realGreen = 0;
+int realBlue = 0;
+
+void runLedLights(){
+    if (showLeds) {
+        FastLED.setBrightness(brightness);
+        FastLED.show();
+    }
+}
+
+String rgbString() {
+    String rgb;
+    rgb = String(Red) + ',' + String(Green) + ',' + String(Blue);
+    return rgb;
+}

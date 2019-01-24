@@ -1,0 +1,5 @@
+#ifndef LIGHT_EFFECTS_GUARD 
+#define LIGHT_EFFECTS_GUARD
+
+
+#endif
