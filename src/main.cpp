@@ -10,27 +10,19 @@ void setup() {
     MSGEQ7.begin();
     Serial.begin(115200);
 
-    setup_wifi();
-
-    client.setServer(MQTT_SERVER, 1883);
-    client.setCallback(callback);
-
-    setupOTA();
-
-    // Setting up heartbeat
-    pinMode(LED_BUILTIN, OUTPUT);
+    red = INITIAL_RED;
+    green = INITIAL_GREEN;
+    blue = INITIAL_BLUE;
 
     brightness = INITIAL_BRIGHTNESS;
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(brightness);
 
-    red = INITIAL_RED;
-    green = INITIAL_GREEN;
-    blue = INITIAL_BLUE;
-    setRealColors();
+    setup_wifi();
+    setupOTA();
 
-    // send state to mqqt to keep things in sync with UI
-    sendState();
+    client.setServer(MQTT_SERVER, 1883);
+    client.setCallback(callback);
 }
 
 void loop() {

@@ -40,24 +40,24 @@ void setupOTA() {
 
 void setup_wifi() {
 
-  delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(MY_SSID);
-  
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(MY_SSID, MY_PASSWORD);
+    delay(10);
+    // We start by connecting to a WiFi network
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(MY_SSID);
+    
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(MY_SSID, MY_PASSWORD);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
 }
 
 
@@ -67,39 +67,40 @@ void reconnect_mqtt() {
     
     // Attempt to connect
     if (client.connect(HOSTNAME, mqtt_username, mqtt_password)) {
-      Serial.println("connected");
-      client.subscribe(LIGHT_SET_TOPIC);
-      setColor(0, 0, 0);
-      sendState();
+        Serial.println("connected");
+        client.subscribe(LIGHT_SET_TOPIC);
+        setRealColors();
+        sendState();
 
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
+        // Wait 5 seconds before retrying
+        delay(5000);
     }
   }
 }
 
 void sendState() {
-  StaticJsonBuffer<BUFFER_SIZE_SEND> jsonBuffer;
+    StaticJsonBuffer<BUFFER_SIZE_SEND> jsonBuffer;
 
-  JsonObject& object = jsonBuffer.createObject();
+    JsonObject& object = jsonBuffer.createObject();
 
-  object["state"] = showLeds ? on_cmd : off_cmd;
-  JsonObject& color = object.createNestedObject("color");
-  color["r"] = red;
-  color["g"] = green;
-  color["b"] = blue;
+    object["state"] = showLeds ? on_cmd : off_cmd;
+    JsonObject& color = object.createNestedObject("color");
+    color["r"] = red;
+    color["g"] = green;
+    color["b"] = blue;
 
-  object["brightness"] = brightness;
-  object["effect"] = effectString.c_str();
+    object["brightness"] = brightness;
+    object["effect"] = effectString.c_str();
 
-  char buffer[object.measureLength() + 1];
-  object.printTo(Serial);
+    char buffer[object.measureLength() + 1];
+    object.printTo(buffer, sizeof(buffer));
+    object.printTo(Serial);
 
-  client.publish(LIGHT_STATE_TOPIC, buffer, true);
+    client.publish(LIGHT_STATE_TOPIC, buffer, true);
 }
 
 

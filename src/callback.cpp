@@ -159,6 +159,8 @@ bool processJson(char* message) {
         } else if (strcmp(root["state"], off_cmd) == 0) {
             showLeds = false;
         }
+
+        Serial.println(showLeds);
     }
 
     // set brightness
