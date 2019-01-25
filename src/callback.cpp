@@ -30,6 +30,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
         return;
     }
 
+    setRealColors();
+
+    // send state back to mqqt to keep things in sync with UI
+    sendState();
+}
+
+void setRealColors() {
     if (showLeds) {
         realRed = map(red, 0, 255, 0, brightness);
         realGreen = map(green, 0, 255, 0, brightness);
@@ -40,9 +47,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
         realGreen = 0;
         realBlue = 0;
     }
-
-    // send state back to mqqt to keep things in sync with UI
-    sendState();
 }
 
 void runEffect(){
@@ -63,13 +67,13 @@ void runEffect(){
         candyCane();
     } else if (effectString == "Party Colors") {
         partyColors();
-    } else if (effectString == "Rotate Party Colors") {
+    } else if (effectString == "Rotate Party") {
         rotatePartyColors();
     } else if (effectString == "Music Rainbow") {
         musicRainbow();
     } else if (effectString == "Music RGB") {
         musicRGB();
-    } else if (effectString == "Music Rotate Party Colors") {
+    } else if (effectString == "Music Rotate Party") {
         musicRotatePartyColors();
     } else if (effectString == "Music Cycle") {
         musicPartyColor();
@@ -113,14 +117,22 @@ void runEffect(){
         lamp_tungsten_100w();
     } else if (effectString == "Lamp High Pressure Sodium") {
         lamp_high_pressure_sodium();
-    } else if (effectString == "Solid Cloud Colors") {
+    } else if (effectString == "Solid Cloud") {
         cloudColors_p();
-    } else if (effectString == "Solid Ocean Colors") {
+    } else if (effectString == "Solid Ocean") {
         oceanColors_p();
-    } else if (effectString == "Solid Forest Colors") {
+    } else if (effectString == "Solid Forest") {
         forestColors_p();
     } else if (effectString == "Solid Lava Colors") {
         lavaColors_p();
+    } else if (effectString == "Solid Rainbow Stripes") {
+        rainbowStripeColors_p();
+    } else if (effectString == "Solid Party") {
+        partyColors_p();
+    } else if (effectString == "Solid Heat") {
+        heatColors_p();
+    } else if (effectString == "Twinkle") {
+        twinkle();
     }
 }
 
@@ -152,6 +164,7 @@ bool processJson(char* message) {
     // set brightness
     if (root.containsKey("brightness")) {
         brightness = root["brightness"];
+        FastLED.setBrightness(brightness);
     }
 
     // if we are cahnging color then do that
@@ -175,6 +188,5 @@ bool processJson(char* message) {
         temp2rgb(kelvin);
     }
 
-    FastLED.setBrightness(brightness);
     return true;
 }

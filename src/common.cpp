@@ -2,6 +2,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
+#include "config.h"
 #include "common.h"
 #include "effects.h"
 #include "music_effects.h"
@@ -11,7 +12,7 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
-bool showLeds = true;
+bool showLeds = INITIAL_LED_STATE;
 CRGB leds[NUM_LEDS];
 int brightness = 0;
 
@@ -21,9 +22,9 @@ const char* on_cmd = "ON";
 const char* off_cmd = "OFF";
 String effectString = "Solid";
 
-int red = 10;
-int green = 10;
-int blue = 10;
+int red = 0;
+int green = 0;
+int blue = 0;
 
 int realRed = 0;
 int realGreen = 0;

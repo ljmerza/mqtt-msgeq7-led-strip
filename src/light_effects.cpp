@@ -59,3 +59,18 @@ void lavaColors_p() {
     CRGBPalette16 current_palette = LavaColors_p;
     fill_led_colors(current_palette);
 }
+
+void rainbowStripeColors_p() {
+    CRGBPalette16 current_palette = RainbowStripeColors_p;
+    fill_led_colors(current_palette);
+}
+
+void partyColors_p() {
+    CRGBPalette16 current_palette = PartyColors_p;
+    fill_led_colors(current_palette);
+}
+
+void heatColors_p() {
+    CRGBPalette16 current_palette = HeatColors_p;
+    fill_led_colors(current_palette);
+}

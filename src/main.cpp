@@ -20,9 +20,14 @@ void setup() {
     // Setting up heartbeat
     pinMode(LED_BUILTIN, OUTPUT);
 
-    brightness = BRIGHTNESS;
+    brightness = INITIAL_BRIGHTNESS;
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(brightness);
+
+    red = INITIAL_RED;
+    green = INITIAL_GREEN;
+    blue = INITIAL_BLUE;
+    setRealColors();
 
     // send state to mqqt to keep things in sync with UI
     sendState();
@@ -51,7 +56,6 @@ void loop() {
     ArduinoOTA.handle();
 
     if (showLeds) {
-        FastLED.setBrightness(brightness);
         runEffect();
         FastLED.show();
     }
@@ -61,6 +65,7 @@ void loop() {
 
     // Slowly cycle the "base color" through the rainbow
     EVERY_N_MILLISECONDS(10) {
+        nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges); // for NOISE animation
         gHue++;
     }
 }

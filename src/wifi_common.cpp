@@ -9,8 +9,7 @@
 #include "callback.h"
 #include "effects.h"
 
-const int BUFFER_SIZE = JSON_OBJECT_SIZE(10);
-
+const int BUFFER_SIZE_SEND = JSON_OBJECT_SIZE(10);
 
 void setupOTA() {
     ArduinoOTA.setPort(OTA_PORT);
@@ -84,22 +83,21 @@ void reconnect_mqtt() {
 }
 
 void sendState() {
-  StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+  StaticJsonBuffer<BUFFER_SIZE_SEND> jsonBuffer;
 
-  JsonObject& root = jsonBuffer.createObject();
+  JsonObject& object = jsonBuffer.createObject();
 
-  root["state"] = showLeds ? on_cmd : off_cmd;
-  JsonObject& color = root.createNestedObject("color");
+  object["state"] = showLeds ? on_cmd : off_cmd;
+  JsonObject& color = object.createNestedObject("color");
   color["r"] = red;
   color["g"] = green;
   color["b"] = blue;
 
-  root["brightness"] = brightness;
-  root["effect"] = effectString.c_str();
+  object["brightness"] = brightness;
+  object["effect"] = effectString.c_str();
 
-
-  char buffer[root.measureLength() + 1];
-  root.printTo(buffer, sizeof(buffer));
+  char buffer[object.measureLength() + 1];
+  object.printTo(Serial);
 
   client.publish(LIGHT_STATE_TOPIC, buffer, true);
 }

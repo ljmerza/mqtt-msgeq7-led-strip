@@ -12,6 +12,10 @@ void cloudColors_p();
 void oceanColors_p();
 void forestColors_p();
 void lavaColors_p();
+void rainbowStripeColors_p();
+void partyColors_p();
+void heatColors_p ();
+
 
 CRGBPalette16 lamp_light(uint8_t red, uint8_t green, uint8_t blue);
 

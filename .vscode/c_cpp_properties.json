@@ -114,7 +114,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=30603",
+                "PLATFORMIO=30604",
                 "ESP8266",
                 "ARDUINO_ARCH_ESP8266",
                 "ESP8266_WEMOS_D1MINI",

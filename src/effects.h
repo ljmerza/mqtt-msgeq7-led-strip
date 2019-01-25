@@ -23,7 +23,13 @@ void fadeall();
 void lightning();
 void ripple();
 void dots();
+
+extern uint8_t maxChanges;
+extern CRGBPalette16 targetPalette;
+extern CRGBPalette16 currentPalette;
 void noise();
+
+
 void twinkle();
 
 int antipodal_index(int i);

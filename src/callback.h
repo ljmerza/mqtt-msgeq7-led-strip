@@ -8,5 +8,6 @@
 void callback(char* topic, byte* payload, unsigned int length);
 void runEffect();
 bool processJson(char* message);
+void setRealColors();
 
 #endif
