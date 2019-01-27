@@ -133,6 +133,8 @@ void runEffect(){
         heatColors_p();
     } else if (effectString == "Twinkle") {
         twinkle();
+    }  else if (effectString == "Music Three Freq") {
+        musicThreeFreq();
     }
 }
 

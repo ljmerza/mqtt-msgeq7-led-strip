@@ -1,4 +1,6 @@
 
+#define FASTLED_ALLOW_INTERRUPTS 0
+
 #include "config.h"
 #include "common.h"
 #include "callback.h"
@@ -17,6 +19,10 @@ void setup() {
     brightness = INITIAL_BRIGHTNESS;
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(brightness);
+
+    // reset LEDs
+    FastLED.clear();
+    FastLED.show();
 
     setup_wifi();
     setupOTA();
@@ -53,7 +59,7 @@ void loop() {
     }
 
     // Insert a delay to keep the framerate modest
-    // delay(1000 / FRAMES_PER_SECOND);
+    delay(1000 / FRAMES_PER_SECOND);
 
     // Slowly cycle the "base color" through the rainbow
     EVERY_N_MILLISECONDS(10) {
