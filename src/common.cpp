@@ -26,6 +26,8 @@ int red = 0;
 int green = 0;
 int blue = 0;
 
+int colorTemp = 0;
+
 int realRed = 0;
 int realGreen = 0;
 int realBlue = 0;

@@ -33,18 +33,14 @@ void setup() {
 
 void loop() {
 
-    if (!client.connected()) {
-        delay(1);
-        Serial.println("Attempting MQTT connection...");
-        reconnect_mqtt();
-        return;
-    }
-
     if (WiFi.status() != WL_CONNECTED) {
-        delay(1);
         Serial.println("Attempting WIFI connection...");
         setup_wifi();
-        return;
+    }
+
+    if (!client.connected()) {
+        Serial.println("Attempting MQTT connection...");
+        reconnect_mqtt();
     }
 
     // Process MQTT tasks
@@ -52,7 +48,7 @@ void loop() {
 
     // Handle OTA
     ArduinoOTA.handle();
-
+ 
     if (showLeds) {
         runEffect();
         FastLED.show();

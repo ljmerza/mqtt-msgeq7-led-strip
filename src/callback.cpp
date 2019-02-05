@@ -187,8 +187,8 @@ bool processJson(char* message) {
     // if we were given a colortemp then do that
     // temp comes in as mireds, need to convert to kelvin then to RGB
     if (root.containsKey("color_temp")) {
-        int color_temp = root["color_temp"];
-        unsigned int kelvin  = 1000000 / color_temp;
+        colorTemp = root["color_temp"];
+        unsigned int kelvin  = 1000000 / colorTemp;
         temp2rgb(kelvin);
     }
 

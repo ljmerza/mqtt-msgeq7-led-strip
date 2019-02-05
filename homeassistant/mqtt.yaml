@@ -1,30 +1,54 @@
----
 
 - platform: mqtt
-  name: "Office Light RGB"
-  state_topic: "office/rgb1/light/status"
-  command_topic: "office/rgb1/light/switch"
-  brightness_state_topic: "office/rgb1/brightness/status"
-  brightness_command_topic: "office/rgb1/brightness/set"
-  rgb_state_topic: "office/rgb1/rgb/status"
-  rgb_command_topic: "office/rgb1/rgb/set"
-  effect_state_topic: "office/rgb1/effect/status"
-  effect_command_topic: "office/rgb1/effect/set"
+  schema: json
+  name: "LED Strip"
+  state_topic: "bruh/porch"
+  command_topic: "bruh/porch/set"
+  effect: true
+  color_temp: true
   effect_list:
-    - rainbow
-    - rainbow_with_glitter
-    - confetti
-    - sinelon
-    - bpm
-    - juggle
-    - candycane
-    - party_colors
-    - rotate_party_colors
-    - music_rainbow
-    - music_rgb
-    - music_rotate_party_colors
-    - music_cycle
-  qos: 0
-  payload_on: "on"
-  payload_off: "off"
+  - Rainbow
+  - Rainbow With Glitter
+  - Confetti
+  - Sinelon
+  - BPM
+  - Solid
+  - Juggle
+  - Candy Cane
+  - Party Colors
+  - Fire
+  - Lightning
+  - Ripple
+  - Noise
+  - Twinkle
+  - Police One
+  - Police All
+  - Cyclon Rainbow
+  - St Patty
+  - Christmas
+  - Halloween
+  - Pumpkin
+  - USA
+  - Valentine
+  - Thanksgiving
+  - Lamp Candle
+  - Lamp Tungsten 40w
+  - Lamp Tungsten 100w
+  - Lamp High Pressure Sodium
+  - Solid Cloud
+  - Solid Ocean
+  - Solid Forest
+  - Solid Lava
+  - Solid Rainbow Stripes
+  - Solid Party
+  - Solid Heat
+  - Rotate Party
+  - Music Rainbow
+  - Music RGB
+  - Music Rotate Party
+  - Music Cycle
+  - Music Three Freq
+  brightness: true
+  rgb: true
   optimistic: false
+  qos: 0

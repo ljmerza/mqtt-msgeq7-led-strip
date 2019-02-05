@@ -28,6 +28,7 @@ extern uint8_t gHue; // rotating "base color" used by many of the patterns
 extern const char* on_cmd;
 extern const char* off_cmd;
 extern String effectString; // which effect do we want
+extern int colorTemp;
 
 extern CMSGEQ7<MSGEQ7_SMOOTH, MSGEQ7_PIN_RESET, MSGEQ7_PIN_STROBE, MSGEQ7_PIN_ANALOG> MSGEQ7;
 extern CRGB leds[NUM_LEDS];

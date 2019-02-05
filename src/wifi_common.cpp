@@ -95,6 +95,7 @@ void sendState() {
 
     object["brightness"] = brightness;
     object["effect"] = effectString.c_str();
+    object["color_temp"] = colorTemp;
 
     char buffer[object.measureLength() + 1];
     object.printTo(buffer, sizeof(buffer));
