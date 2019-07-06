@@ -10,4 +10,5 @@ void runEffect();
 bool processJson(char* message);
 void setRealColors();
 
+
 #endif
