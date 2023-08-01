@@ -43,7 +43,7 @@ void christmas() {
     }
 }
 
-void candyCane() {
+void candy_cane() {
     static uint8_t startIndex = 0;
 
     const CRGBPalette16 currentPalettestriped = CRGBPalette16(

@@ -1,54 +1,48 @@
 
-- platform: mqtt
-  schema: json
-  name: "LED Strip"
-  state_topic: "bruh/porch"
-  command_topic: "bruh/porch/set"
-  effect: true
-  color_temp: true
-  effect_list:
-  - Rainbow
-  - Rainbow With Glitter
-  - Confetti
-  - Sinelon
-  - BPM
-  - Solid
-  - Juggle
-  - Candy Cane
-  - Party Colors
-  - Fire
-  - Lightning
-  - Ripple
-  - Noise
-  - Twinkle
-  - Police One
-  - Police All
-  - Cyclon Rainbow
-  - St Patty
-  - Christmas
-  - Halloween
-  - Pumpkin
-  - USA
-  - Valentine
-  - Thanksgiving
-  - Lamp Candle
-  - Lamp Tungsten 40w
-  - Lamp Tungsten 100w
-  - Lamp High Pressure Sodium
-  - Solid Cloud
-  - Solid Ocean
-  - Solid Forest
-  - Solid Lava
-  - Solid Rainbow Stripes
-  - Solid Party
-  - Solid Heat
-  - Rotate Party
-  - Music Rainbow
-  - Music RGB
-  - Music Rotate Party
-  - Music Cycle
-  - Music Three Freq
-  brightness: true
-  rgb: true
-  optimistic: false
-  qos: 0
+mqtt:
+  light:
+    name: "LED Strip Kitchen"
+    state_topic: "led/kitchen"
+    command_topic: "led/kitchen/set"
+    effect_list:
+      - Rainbow
+      - Rainbow With Glitter
+      - Confetti
+      - Sinelon
+      - BPM
+      - Solid
+      - Juggle
+      - Candy Cane
+      - Party Colors
+      - Fire
+      - Lightning
+      - Ripple
+      - Noise
+      - Twinkle
+      - Police One
+      - Police All
+      - Cyclon Rainbow
+      - St Patty
+      - Christmas
+      - Halloween
+      - Pumpkin
+      - USA
+      - Valentine
+      - Thanksgiving
+      - Lamp Candle
+      - Lamp Tungsten 40w
+      - Lamp Tungsten 100w
+      - Lamp High Pressure Sodium
+      - Solid Cloud
+      - Solid Ocean
+      - Solid Forest
+      - Solid Lava
+      - Solid Rainbow Stripes
+      - Solid Party
+      - Solid Heat
+      - Rotate Party
+      - Music Rainbow
+      - Music RGB
+      - Music Rotate Party
+      - Music Cycle
+      - Music Three Freq

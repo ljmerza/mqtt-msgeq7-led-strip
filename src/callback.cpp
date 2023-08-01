@@ -10,187 +10,187 @@
 #include "holiday_effects.h"
 #include "light_effects.h"
 
-const int BUFFER_SIZE = JSON_OBJECT_SIZE(10);
+StaticJsonDocument<256> json_doc;
+
 
 void callback(char* topic, byte* payload, unsigned int length) {
-    
-    Serial.println(' ');
-    Serial.print("Message arrived [");
-    Serial.print(topic);
-    Serial.print("] ");
+    Serial.println("Message arrived on topic: " + String(topic));
 
-    char message[length + 1];
-    for (int i = 0; i < length; i++) {
-        message[i] = (char)payload[i];
-    }
-    message[length] = '\0';
-    Serial.println(message);
+    // Clear the previous JSON data
+    json_doc.clear();
 
-    if (!processJson(message)) {
+    // Parse the incoming JSON data
+    DeserializationError error = deserializeJson(json_doc, payload, length);
+
+    // Check for parsing errors
+    if (error) {
+        Serial.print("JSON parsing failed: ");
+        Serial.println(error.c_str());
         return;
     }
 
-    setRealColors();
+    serializeJsonPretty(json_doc, Serial);
+    process_json(json_doc);
+    
+    set_real_colors();
 
     // send state back to mqqt to keep things in sync with UI
-    sendState();
+    send_state();
 }
 
-void setRealColors() {
-    if (showLeds) {
-        realRed = map(red, 0, 255, 0, brightness);
-        realGreen = map(green, 0, 255, 0, brightness);
-        realBlue = map(blue, 0, 255, 0, brightness);
+void set_real_colors() {
+    if (show_leds) {
+        real_red = map(red, 0, 255, 0, brightness);
+        real_green = map(green, 0, 255, 0, brightness);
+        real_blue = map(blue, 0, 255, 0, brightness);
 
     } else {
-        realRed = 0;
-        realGreen = 0;
-        realBlue = 0;
+        real_red = 0;
+        real_green = 0;
+        real_blue = 0;
     }
 }
 
-void runEffect(){
-
-    if (effectString == "Rainbow") {
+bool run_effect(){
+    if (effect_string == "Rainbow") {
         rainbow();
-    } else if (effectString == "Rainbow With Glitter") {
-        rainbowWithGlitter();
-    } else if (effectString == "Confetti") {
+    } else if (effect_string == "Rainbow With Glitter") {
+        rainbow_with_glitter();
+    } else if (effect_string == "Confetti") {
         confetti();
-    } else if (effectString == "Sinelon") {
+    } else if (effect_string == "Sinelon") {
         sinelon();
-    } else if (effectString == "BPM") {
+    } else if (effect_string == "BPM") {
         bpm();
-    } else if (effectString == "Juggle") {
+    } else if (effect_string == "Juggle") {
         juggle();
-    } else if (effectString == "Candy Cane") {
-        candyCane();
-    } else if (effectString == "Party Colors") {
-        partyColors();
-    } else if (effectString == "Rotate Party") {
-        rotatePartyColors();
-    } else if (effectString == "Music Rainbow") {
-        musicRainbow();
-    } else if (effectString == "Music RGB") {
-        musicRGB();
-    } else if (effectString == "Music Rotate Party") {
-        musicRotatePartyColors();
-    } else if (effectString == "Music Cycle") {
-        musicPartyColor();
-    } else if (effectString == "Fire") {
+    } else if (effect_string == "Candy Cane") {
+        candy_cane();
+    } else if (effect_string == "Party Colors") {
+        party_colors();
+    } else if (effect_string == "Rotate Party") {
+        rotate_party_colors();
+    } else if (effect_string == "Music Rainbow") {
+        music_rainbow();
+    } else if (effect_string == "Music RGB") {
+        music_rgb();
+    } else if (effect_string == "Music Rotate Party") {
+        music_rotate_party_colors();
+    } else if (effect_string == "Music Cycle") {
+        music_party_color();
+    } else if (effect_string == "Fire") {
         fire();
-    } else if (effectString == "Solid") {
-        setColor(realRed, realGreen, realBlue);
-    } else if (effectString == "Lightning") {
+    } else if (effect_string == "Solid") {
+        set_color(real_red, real_green, real_blue);
+    } else if (effect_string == "Lightning") {
         lightning();
-    } else if (effectString == "Ripple") {
+    } else if (effect_string == "Ripple") {
         ripple();
-    } else if (effectString == "Dots") {
+    } else if (effect_string == "Dots") {
         dots();
-    } else if (effectString == "Noise") {
+    } else if (effect_string == "Noise") {
         noise();
-    } else if (effectString == "Police All") {
+    } else if (effect_string == "Police All") {
         police_all();
-    } else if (effectString == "Police One") {
+    } else if (effect_string == "Police One") {
         police_one();
-    } else if (effectString == "Cyclon Rainbow") {
+    } else if (effect_string == "Cyclon Rainbow") {
         cyclon_rainbow();
-    } else if (effectString == "St Patty") {
+    } else if (effect_string == "St Patty") {
         st_patty();
-    } else if (effectString == "Christmas") {
+    } else if (effect_string == "Christmas") {
         christmas();
-    } else if (effectString == "Halloween") {
+    } else if (effect_string == "Halloween") {
         halloween();
-    } else if (effectString == "Pumpkin") {
+    } else if (effect_string == "Pumpkin") {
         pumpkin();
-    } else if (effectString == "USA") {
+    } else if (effect_string == "USA") {
         usa();
-    } else if (effectString == "Valentine") {
+    } else if (effect_string == "Valentine") {
         valentine();
-    } else if (effectString == "Thanksgiving") {
+    } else if (effect_string == "Thanksgiving") {
         thanksgiving();
-    } else if (effectString == "Lamp Candle") {
+    } else if (effect_string == "Lamp Candle") {
         lamp_candle();
-    } else if (effectString == "Lamp Tungsten 40w") {
+    } else if (effect_string == "Lamp Tungsten 40w") {
         lamp_tungsten_40w();
-    } else if (effectString == "Lamp Tungsten 100w") {
+    } else if (effect_string == "Lamp Tungsten 100w") {
         lamp_tungsten_100w();
-    } else if (effectString == "Lamp High Pressure Sodium") {
+    } else if (effect_string == "Lamp High Pressure Sodium") {
         lamp_high_pressure_sodium();
-    } else if (effectString == "Solid Cloud") {
-        cloudColors_p();
-    } else if (effectString == "Solid Ocean") {
-        oceanColors_p();
-    } else if (effectString == "Solid Forest") {
-        forestColors_p();
-    } else if (effectString == "Solid Lava Colors") {
-        lavaColors_p();
-    } else if (effectString == "Solid Rainbow Stripes") {
-        rainbowStripeColors_p();
-    } else if (effectString == "Solid Party") {
-        partyColors_p();
-    } else if (effectString == "Solid Heat") {
+    } else if (effect_string == "Solid Cloud") {
+        cloud_colors_p();
+    } else if (effect_string == "Solid Ocean") {
+        ocean_colors_p();
+    } else if (effect_string == "Solid Forest") {
+        forest_colors_p();
+    } else if (effect_string == "Solid Lava Colors") {
+        lava_colors_p();
+    } else if (effect_string == "Solid Rainbow Stripes") {
+        rainbow_stripe_colors();
+    } else if (effect_string == "Solid Party") {
+        party_colors_p();
+    } else if (effect_string == "Solid Heat") {
         heatColors_p();
-    } else if (effectString == "Twinkle") {
+    } else if (effect_string == "Twinkle") {
         twinkle();
-    }  else if (effectString == "Music Three Freq") {
-        musicThreeFreq();
+    } else if (effect_string == "Music BPM") {
+        music_bpm();
+    } else if (effect_string == "Music Volume") {
+        music_volume();
+    } else if (effect_string == "Music Average") {
+        music_average();
+    } else if (effect_string == "Music Average") {
+        music_average();
+    }else if (effect_string == "Music Lines") {
+        music_lines();
+        return true;
     }
+
+    return false;
 }
 
-bool processJson(char* message) {
-    StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(message);
 
-    if (!root.success()) {
-        Serial.println("parseObject() failed");
-        return false;
-    }
-
-    // print the JSON to Serial
-    root.prettyPrintTo(Serial);
-
+void process_json(StaticJsonDocument<256>& json_doc) {
     // reset strip colors
     reset_strip();
 
     // are we on or off?
-    if (root.containsKey("state")) {
-        if (strcmp(root["state"], on_cmd) == 0) {
-            showLeds = true;
-            
-        } else if (strcmp(root["state"], off_cmd) == 0) {
-            showLeds = false;
+    if (json_doc.containsKey("state")) {
+        if (strcmp(json_doc["state"], on_cmd) == 0) {
+            show_leds = true;
+        } else if (strcmp(json_doc["state"], off_cmd) == 0) {
+            show_leds = false;
         }
-
-        Serial.println(showLeds);
     }
 
+    Serial.println(show_leds);
+
     // set brightness
-    if (root.containsKey("brightness")) {
-        brightness = root["brightness"];
+    if (json_doc.containsKey("brightness")) {
+        brightness = json_doc["brightness"];
         FastLED.setBrightness(brightness);
     }
 
     // if we are cahnging color then do that
-    if (root.containsKey("color")) {
-        red = root["color"]["r"];
-        green = root["color"]["g"];
-        blue = root["color"]["b"];
+    if (json_doc.containsKey("color")) {
+        JsonArray color = json_doc["color"];
+        red = color[0];
+        green = color[1];
+        blue = color[2];
     }
     
     // if there's an effect given then do that
-    if (root.containsKey("effect")) {
-        const char* effect = root["effect"];
-        effectString = effect;
+    if (json_doc.containsKey("effect")) {
+        const char* effect = json_doc["effect"];
+        effect_string = effect;
     }
     
-    // if we were given a colortemp then do that
+    // if we were given a color_temp then do that
     // temp comes in as mireds, need to convert to kelvin then to RGB
-    if (root.containsKey("color_temp")) {
-        colorTemp = root["color_temp"];
-        unsigned int kelvin  = 1000000 / colorTemp;
+    if (json_doc.containsKey("color_temp")) {
+        color_temp = json_doc["color_temp"];
+        unsigned int kelvin  = 1000000 / color_temp;
         temp2rgb(kelvin);
     }
-
-    return true;
 }

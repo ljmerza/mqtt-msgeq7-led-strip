@@ -25,10 +25,12 @@ void setup() {
     FastLED.show();
 
     setup_wifi();
-    setupOTA();
+    setup_ota();
 
     client.setServer(MQTT_SERVER, 1883);
     client.setCallback(callback);
+
+    ota_setup();
 }
 
 void loop() {
@@ -49,9 +51,11 @@ void loop() {
     // Handle OTA
     ArduinoOTA.handle();
  
-    if (showLeds) {
-        runEffect();
-        FastLED.show();
+    if (show_leds) {
+        bool did_show = run_effect();
+        if(!did_show) {
+            FastLED.show();
+        }
     }
 
     // Insert a delay to keep the framerate modest

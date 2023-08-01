@@ -2,7 +2,7 @@
 
 
 
-void partyColors() {
+void party_colors() {
     static uint8_t startIndex = 0;
 
     startIndex = startIndex + 1;
@@ -20,7 +20,7 @@ void addGlitter(fract8 chanceOfGlitter) {
     }
 }
 
-void rainbowWithGlitter() {
+void rainbow_with_glitter() {
     // built-in FastLED rainbow, plus some random sparkly glitter
     rainbow();
     addGlitter(80);
@@ -30,14 +30,14 @@ void confetti() {
     // random colored speckles that blink in and fade smoothly
     fadeToBlackBy(leds, NUM_LEDS, 10);
     int pos = random16(NUM_LEDS);
-    leds[pos] += CRGB(realRed + random8(64), realGreen, realBlue);
+    leds[pos] += CRGB(real_red + random8(64), real_green, real_blue);
 }
 
 void sinelon() {
     // a colored dot sweeping back and forth, with fading trails
     fadeToBlackBy(leds, NUM_LEDS, 20);
     int pos = beatsin16(13, 0, NUM_LEDS - 1);
-    leds[pos] += CRGB(realRed, realGreen, realBlue);
+    leds[pos] += CRGB(real_red, real_green, real_blue);
 }
 
 void bpm() {
@@ -56,11 +56,11 @@ void juggle() {
     fadeToBlackBy(leds, NUM_LEDS, 20);
 
     for (int i = 0; i < 8; i++) {
-        leds[beatsin16(i + 7, 0, NUM_LEDS - 1  )] |= CRGB(realRed, realGreen, realBlue);
+        leds[beatsin16(i + 7, 0, NUM_LEDS - 1  )] |= CRGB(real_red, real_green, real_blue);
     }
 }
 
-void rotatePartyColors() {
+void rotate_party_colors() {
     static uint8_t colorIndex = 0;
     static uint8_t delay = 0;
 
@@ -109,7 +109,7 @@ void fire() {
   }
 }
 
-void setColor(int inR, int inG, int inB) {
+void set_color(int inR, int inG, int inB) {
   for (int i = 0; i < NUM_LEDS; i++) {
     leds[i].red = inR;
     leds[i].green = inG;
@@ -135,19 +135,19 @@ void lightning(){
         else dimmer = random8(1, 3); // return strokes are brighter than the leader
 
         fill_solid(leds + ledstart, ledlen, CHSV(255, 0, 255 / dimmer));
-        runLedLights();   
+        run_led_lights();   
 
          // Show a section of LED's
         delay(random8(4, 10));                // each flash only lasts 4-10 milliseconds
         fill_solid(leds + ledstart, ledlen, CHSV(255, 0, 0)); // Clear the section of LED's
 
-        runLedLights();
+        run_led_lights();
         if (flashCounter == 0) delay (130);   // longer delay until next flash after the leader
         delay(50 + random8(100));             // shorter delay between strokes
     }
 
     delay(random8(frequency) * 100);        // delay between strikes
-    runLedLights();
+    run_led_lights();
 }
 
 void temp2rgb(unsigned int kelvin) {
@@ -205,7 +205,7 @@ void temp2rgb(unsigned int kelvin) {
     }
 }
 
-void fadeall() {
+void fade_all() {
   for (int i = 0; i < NUM_LEDS; i++) {
     leds[i].nscale8(250);  //for CYCLon
   }
@@ -276,7 +276,7 @@ void noise() {
     }
     
     dist += beatsin8(10, 1, 4); // Moving along the distance (that random number we started out with). Vary it a bit with a sine wave.
-    runLedLights();
+    run_led_lights();
 }
 
 // TWINKLE
@@ -289,7 +289,7 @@ void twinkle() {
     // Resets strip if previous animation was running
     if (twinklecounter < 2) {
         FastLED.clear();
-        runLedLights();
+        run_led_lights();
     }
 
     const CRGB lightcolor(8, 7, 1);
@@ -309,7 +309,7 @@ void twinkle() {
         if ( !leds[j] ) leds[j] = lightcolor;
     }
 
-    runLedLights();
+    run_led_lights();
 }
 
 // POLICE
@@ -374,10 +374,10 @@ void cyclon_rainbow() {
         // Set the i'th led to red
         leds[i] = CHSV(hue++, 255, 255);
         // Show the leds
-        runLedLights();
+        run_led_lights();
         // now that we've shown the leds, reset the i'th led to black
         // leds[i] = CRGB::Black;
-        fadeall();
+        fade_all();
         // Wait a little bit before we loop around and do it again
         delay(10);
     }
@@ -386,10 +386,10 @@ void cyclon_rainbow() {
         // Set the i'th led to red
         leds[i] = CHSV(hue++, 255, 255);
         // Show the leds
-        runLedLights();
+        run_led_lights();
         // now that we've shown the leds, reset the i'th led to black
         // leds[i] = CRGB::Black;
-        fadeall();
+        fade_all();
         // Wait a little bit before we loop around and do it again
         delay(10);
     }

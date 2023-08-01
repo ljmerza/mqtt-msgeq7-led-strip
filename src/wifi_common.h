@@ -5,8 +5,9 @@
 #include "common.h"
 
 void reconnect_mqtt();
-void setupOTA();
+void setup_ota();
 void setup_wifi();
-void sendState();
+void send_state();
+void ota_setup();
 
 #endif

@@ -40,32 +40,32 @@ void lamp_high_pressure_sodium() {
     fill_led_colors(current_palette);
 }
 
-void cloudColors_p() {
+void cloud_colors_p() {
     CRGBPalette16 current_palette = CloudColors_p;
     fill_led_colors(current_palette);
 }
 
-void oceanColors_p() {
+void ocean_colors_p() {
     CRGBPalette16 current_palette = OceanColors_p;
     fill_led_colors(current_palette);
 }
 
-void forestColors_p() {
+void forest_colors_p() {
     CRGBPalette16 current_palette = ForestColors_p;
     fill_led_colors(current_palette);
 }
 
-void lavaColors_p() {
+void lava_colors_p() {
     CRGBPalette16 current_palette = LavaColors_p;
     fill_led_colors(current_palette);
 }
 
-void rainbowStripeColors_p() {
+void rainbow_stripe_colors() {
     CRGBPalette16 current_palette = RainbowStripeColors_p;
     fill_led_colors(current_palette);
 }
 
-void partyColors_p() {
+void party_colors_p() {
     CRGBPalette16 current_palette = PartyColors_p;
     fill_led_colors(current_palette);
 }

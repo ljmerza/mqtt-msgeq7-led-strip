@@ -4,17 +4,21 @@
 #include "effects.h"
 #include "config.h"
 
-uint8_t getBassReading();
-uint8_t getMidsReading();
-uint8_t getTrebleReading();
+uint8_t get_bass_reading();
+uint8_t get_mid_reading();
+uint8_t get_treble_reading();
 
-uint8_t _mapFrequencies(int freqArg0, int freqArg1);
+uint8_t get_breakpoint();
+uint8_t linear_scale(uint8_t input_value);
+uint8_t exponential_scale(uint8_t input_value);
 
-void musicThreeFreq();
-
-void musicRainbow();
-void musicPartyColor();
-void musicRGB();
-void musicRotatePartyColors();
+void music_lines();
+void music_volume();
+void music_average();
+void music_bpm();
+void music_rainbow();
+void music_party_color();
+void music_rgb();
+void music_rotate_party_colors();
 
 #endif

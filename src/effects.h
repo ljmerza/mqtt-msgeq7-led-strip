@@ -3,22 +3,22 @@
 
 #include "common.h"
 
-void partyColors();
+void party_colors();
 void rainbow();
 
 void addGlitter(fract8 chanceOfGlitter);
-void rainbowWithGlitter();
+void rainbow_with_glitter();
 void confetti();
 void sinelon();
 void bpm();
 
 
 void juggle();
-void rotatePartyColors();
+void rotate_party_colors();
 void fire();
-void setColor(int inR, int inG, int inB);
+void set_color(int inR, int inG, int inB);
 int temp2rgb(unsigned int kelvin);
-void fadeall();
+void fade_all();
 
 void lightning();
 void ripple();

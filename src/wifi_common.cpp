@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#include <ArduinoOTA.h>
 
 #include "config.h"
 #include "common.h"
@@ -9,9 +10,9 @@
 #include "callback.h"
 #include "effects.h"
 
-const int BUFFER_SIZE_SEND = JSON_OBJECT_SIZE(10);
+const int JSON_BUFFER_SIZE = 256; // Adjust the size based on your JSON message
 
-void setupOTA() {
+void setup_ota() {
     ArduinoOTA.setPort(OTA_PORT);
     ArduinoOTA.setHostname(HOSTNAME);
 
@@ -60,7 +61,6 @@ void setup_wifi() {
     Serial.println(WiFi.localIP());
 }
 
-
 void reconnect_mqtt() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -68,10 +68,7 @@ void reconnect_mqtt() {
     // Attempt to connect
     if (client.connect(HOSTNAME, mqtt_username, mqtt_password)) {
         Serial.println("connected");
-        client.subscribe(LIGHT_SET_TOPIC);
-        setRealColors();
-        sendState();
-
+        client.subscribe(LIGHT_SET_TOPIC, 1);
     } else {
         Serial.print("failed, rc=");
         Serial.print(client.state());
@@ -82,26 +79,53 @@ void reconnect_mqtt() {
   }
 }
 
-void sendState() {
-    StaticJsonBuffer<BUFFER_SIZE_SEND> jsonBuffer;
+void send_state() {
+    StaticJsonDocument<JSON_BUFFER_SIZE> json_doc;
 
-    JsonObject& object = jsonBuffer.createObject();
+    json_doc["state"] = show_leds ? on_cmd : off_cmd;
 
-    object["state"] = showLeds ? on_cmd : off_cmd;
-    JsonObject& color = object.createNestedObject("color");
-    color["r"] = red;
-    color["g"] = green;
-    color["b"] = blue;
+    JsonArray color = json_doc.createNestedArray("color");
+    color.add(red);
+    color.add(green);
+    color.add(blue);
 
-    object["brightness"] = brightness;
-    object["effect"] = effectString.c_str();
-    object["color_temp"] = colorTemp;
+    json_doc["brightness"] = brightness;
+    json_doc["effect"] = effect_string.c_str();
+    json_doc["color_temp"] = color_temp;
 
-    char buffer[object.measureLength() + 1];
-    object.printTo(buffer, sizeof(buffer));
-    object.printTo(Serial);
+    String jsonString;
+    serializeJson(json_doc, jsonString);
 
-    client.publish(LIGHT_STATE_TOPIC, buffer, true);
+    // Serialize the JSON document to a string
+    client.publish(LIGHT_STATE_TOPIC, jsonString.c_str());
 }
 
+void ota_setup() {
+    ArduinoOTA.onStart([]() {
+        Serial.println("OTA Starting...");
+    });
+
+    ArduinoOTA.onEnd([]() {
+        Serial.println("\nOTA End");
+    });
+
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("OTA Progress: %u%%\r", (progress / (total / 100)));
+    });
+
+    ArduinoOTA.onError([](ota_error_t error) {
+        Serial.printf("OTA Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+        else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    });
+
+    ArduinoOTA.begin();
+
+    Serial.println("OTA Ready");
+    Serial.print("OTA IP: ");
+    Serial.println(WiFi.localIP());
+}
 

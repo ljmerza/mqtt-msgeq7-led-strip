@@ -4,11 +4,12 @@
 
 #include "Common.h"
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 void callback(char* topic, byte* payload, unsigned int length);
-void runEffect();
-bool processJson(char* message);
-void setRealColors();
+bool run_effect();
+void process_json(StaticJsonDocument<256>& json_doc);
+void set_real_colors();
 
 
 #endif

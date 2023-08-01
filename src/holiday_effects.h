@@ -4,7 +4,7 @@
 
 void st_patty();
 void christmas();
-void candyCane();
+void candy_cane();
 
 void halloween();
 void pumpkin();
