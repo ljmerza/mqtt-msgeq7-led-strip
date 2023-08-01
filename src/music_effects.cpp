@@ -56,8 +56,8 @@ uint8_t get_breakpoint() {
 }
 
 uint8_t linear_scale(uint8_t input_value) {
-    const uint8_t input_min = 50;
-    const uint8_t input_max = 250;
+    const uint8_t input_min = 30;
+    const uint8_t input_max = 200;
     
     const uint8_t output_min = 0;
     const uint8_t output_max = 255;
@@ -80,8 +80,8 @@ uint8_t exponential_scale(uint8_t input_value) {
 }
 
 void music_volume(){ 
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
-    if(!newReading) return;
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
     uint8_t volume = MSGEQ7.getVolume();
     FastLED.setBrightness(volume);
@@ -139,8 +139,8 @@ void music_lines() {
 }
 
 void music_average(){ 
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
-    if(!newReading) return;
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
     uint8_t freq0 = MSGEQ7.get(MSGEQ7_0, 0);
     freq0 = mapNoise(freq0);
@@ -162,58 +162,53 @@ void music_average(){
 }
 
 void music_bpm(){
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
-    if (newReading) {
-        uint8_t freq = get_bass_reading();
-        FastLED.setBrightness(freq);
-        bpm();
-    }
+    uint8_t freq = get_bass_reading();
+    FastLED.setBrightness(freq);
+    bpm();
 }
 
 void music_rainbow() {
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
-    if (newReading) {
-        uint8_t freq = get_bass_reading();
-        FastLED.setBrightness(freq);
-        rainbow();
-    }
+    uint8_t freq = get_bass_reading();
+    FastLED.setBrightness(freq);
+    rainbow();
 }
 
 void music_party_color() {
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
-    if (newReading) {
-        uint8_t freq = get_bass_reading();
-        FastLED.setBrightness(freq);
-        party_colors();
-    }
+    uint8_t freq = get_bass_reading();
+    FastLED.setBrightness(freq);
+    party_colors();
 }
 
 void music_rgb() {
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
-    if (newReading) {
-        uint8_t freq1 = MSGEQ7.get(MSGEQ7_1, 0);
-        uint8_t freq3 = MSGEQ7.get(MSGEQ7_3, 0);
-        uint8_t freq5 = MSGEQ7.get(MSGEQ7_5, 0);
+    uint8_t freq1 = MSGEQ7.get(MSGEQ7_1, 0);
+    uint8_t freq3 = MSGEQ7.get(MSGEQ7_3, 0);
+    uint8_t freq5 = MSGEQ7.get(MSGEQ7_5, 0);
 
-        freq1 = mapNoise(freq1);
-        freq3 = mapNoise(freq3);
-        freq5 = mapNoise(freq5);
+    freq1 = mapNoise(freq1);
+    freq3 = mapNoise(freq3);
+    freq5 = mapNoise(freq5);
 
-        fill_solid(leds, NUM_LEDS, CRGB(freq1, freq3, freq5));
-        fadeToBlackBy(leds, NUM_LEDS, 10);
-    }
+    fill_solid(leds, NUM_LEDS, CRGB(freq1, freq3, freq5));
+    fadeToBlackBy(leds, NUM_LEDS, 10);
 }
 
 void music_rotate_party_colors() {
-    bool newReading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
 
-    if (newReading) {
-        uint8_t freq = get_bass_reading();
-        rotate_party_colors();
-        FastLED.setBrightness(freq);
-    }
+    uint8_t freq = get_bass_reading();
+    rotate_party_colors();
+    FastLED.setBrightness(freq);
 }
