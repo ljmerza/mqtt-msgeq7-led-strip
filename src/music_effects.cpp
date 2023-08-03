@@ -1,7 +1,11 @@
+#include <iostream>
+#include <algorithm>
+
 #include "config.h"
 #include "common.h"
 #include "music_effects.h"
 
+#define MSGEQ7_NUM_BANDS 7
 
 uint8_t get_bass_reading() {
     uint8_t freq0 = MSGEQ7.get(MSGEQ7_0, 0);
@@ -11,8 +15,7 @@ uint8_t get_bass_reading() {
     freq1 = mapNoise(freq1);
     uint8_t freq = max(freq0, freq1);
 
-    uint8_t reading = map(freq, 0, 255, 20, 255);
-    return reading;
+    return freq;
 }
 
 uint8_t get_mid_reading() {
@@ -27,8 +30,7 @@ uint8_t get_mid_reading() {
     uint8_t freq = max(freq0, freq1);
     freq = max(freq, freq2);
 
-    uint8_t reading = map(freq, 0, 255, 20, 255);
-    return reading;
+    return freq;
 }
 
 uint8_t get_treble_reading() {
@@ -39,25 +41,12 @@ uint8_t get_treble_reading() {
     freq1 = mapNoise(freq0);
     uint8_t freq = max(freq0, freq1);
 
-    uint8_t reading = map(freq, 0, 255, 20, 255);
-    return reading;
-}
-
-uint8_t get_breakpoint() {
-    uint8_t bass = get_bass_reading();
-    uint8_t mid = get_mid_reading();
-    uint8_t treble = get_treble_reading();
-
-    uint8_t sum = bass + mid + treble;
-    uint8_t break_point = (sum / 3);
-
-    if(bass > break_point) return 255;
-    return 0;
+    return freq;
 }
 
 uint8_t linear_scale(uint8_t input_value) {
-    const uint8_t input_min = 30;
-    const uint8_t input_max = 200;
+    const uint8_t input_min = 75;
+    const uint8_t input_max = 230;
     
     const uint8_t output_min = 0;
     const uint8_t output_max = 255;
@@ -67,58 +56,51 @@ uint8_t linear_scale(uint8_t input_value) {
     if (scaled_value < output_min) {
         scaled_value = output_min;
     }
-
-    return static_cast<int>(scaled_value);
-}
-
-uint8_t exponential_scale(uint8_t input_value) {
-    double scaling_factor = 2.0;
-
-    double normalized_value = static_cast<double>(input_value) / 255.0;
-    double scaled_value = pow(255.0, normalized_value * scaling_factor) - 1.0;
-    return static_cast<int>(scaled_value);
-}
-
-void music_volume(){ 
-    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
-    if(!new_reading) return;
-
-    uint8_t volume = MSGEQ7.getVolume();
-    FastLED.setBrightness(volume);
-}
-
-void music_lines() {
-    #define NUMBEROFLINES 14 // number of LED lines on strip at one time
-    #define LINELENGTH 3 // length of each LED line
-    #define EIGHTBIT 255
-    #define NUM_CHANNELS 7
-    #define HUESPEED 5 // how fast the hue increments for each LED movement
-    #define LEDSPEED 0 // how fast the LED lines move in ms - effects MSGEQ7 reads
-
-    int hues[NUMBEROFLINES] = {0,18,36,54,72,91,109,127,145,163,182,200,281,236};
-    int positions[NUMBEROFLINES] = {0,7,14,21,28,35,42,49,56,63,70,77,84,90};
-    int values[NUMBEROFLINES];
-
-    for(int i=0; i < NUM_CHANNELS; i++){
-        values[i] = MSGEQ7.get(i, 0);
+    if (scaled_value > output_max) {
+        scaled_value = output_max;
     }
 
-    // for each led line
-    for (unsigned int k = 0; k < NUM_LEDS; k++) {
+    return static_cast<int>(scaled_value);
+}
 
-	    // for each led in the led line add color
-	    for(int i = 0; i < LINELENGTH; i++){
-	        if ( positions[k] + i < NUM_LEDS) {
-	        	leds[positions[k] + i] = CHSV(hues[k], 255, values[k]);
-	        }
-	    }
+void set_freq_to_brightness() {
+    uint8_t freq = get_bass_reading();
+    freq = linear_scale(freq);
+    FastLED.setBrightness(freq);
+}
 
-	    // once all colors of that line are added show line
-	    FastLED.show();
+#define NUMBEROFLINES 1 // number of LED lines on strip at one time
+#define LINELENGTH 4 // length of each LED line
+#define EIGHTBIT 255
+#define HUESPEED 5 // how fast the hue increments for each LED movement
+#define LEDSPEED 1 // how fast the LED lines move in ms - affects MSGEQ7 reads
+int hues[NUMBEROFLINES] = {0}; // the hue of each line at any given point in time
+int positions[NUMBEROFLINES] = {0}; // positions of lines at any given point in time
 
-	    // turn off last LED, increment position
-	    leds[positions[k]] = CRGB::Black;
-	    positions[k]++;
+void music_lines() {
+    MSGEQ7.read(100);
+    uint8_t freq = get_bass_reading();
+    freq = linear_scale(freq);
+    Serial.println(freq);
+
+    // Loop through each line
+    for(unsigned int k = 0; k < NUMBEROFLINES; k++) {
+
+	    // For each LED in the led line, add color with the given brightness (freq)
+        for (int i = 0; i < LINELENGTH; i++) {
+            int led_index = positions[k] + i;
+            if (led_index < NUM_LEDS) {
+                // Set the color of the LED using CHSV(hue, saturation, brightness)
+                leds[led_index] = CHSV(hues[k], 255, freq);
+            }
+        }
+
+	    // Turn off the previous LED in the line, and increment the position for the next iteration
+        // this moves the line forward
+        if (positions[k] > 0) {
+            leds[positions[k]] = CRGB::Black;
+        }
+        positions[k]++;
 
 	    // increment hue and check of hue max
 	    hues[k] += HUESPEED;
@@ -126,47 +108,78 @@ void music_lines() {
 	    	hues[k] = 0;
 	    }
 
-	    // check for line position at end of strip
-	    if (positions[k] > NUM_LEDS + LINELENGTH - 2) {
-	        // if at end of strip reset position
+	    // Check if the line's position has reached the end of the strip
+	    if (positions[k] > NUM_LEDS) {
 	        positions[k] = 0;
 	    }
-
 	}
 
-	// delay until next led change
+    // delay until next led change
 	delay(LEDSPEED);
 }
 
-void music_average(){ 
+
+#define FRAMES_PER_SECOND 120
+float color_offset = 0; // variable to keep track of the color offset
+int max_brightness = 0;  // Variable to keep track of the maximum brightness
+int frame_count = 0;  // Counter to keep track of the number of frames
+float scale_factor = 3.0; // Initialize scale_factor
+float bias = 3; // Initialize bias
+
+void music_seven_channels() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
     if(!new_reading) return;
 
-    uint8_t freq0 = MSGEQ7.get(MSGEQ7_0, 0);
-    freq0 = mapNoise(freq0);
-    uint8_t freq1 = MSGEQ7.get(MSGEQ7_1, 0);
-    freq1 = mapNoise(freq1);
-    uint8_t freq2 = MSGEQ7.get(MSGEQ7_2, 0);
-    freq2 = mapNoise(freq2);
-    uint8_t freq3 = MSGEQ7.get(MSGEQ7_3, 0);
-    freq3 = mapNoise(freq3);
-    uint8_t freq4 = MSGEQ7.get(MSGEQ7_4, 0);
-    freq4 = mapNoise(freq4);
-    uint8_t freq5 = MSGEQ7.get(MSGEQ7_5, 0);
-    freq5 = mapNoise(freq5);
-    uint8_t freq6 = MSGEQ7.get(MSGEQ7_6, 0);
-    freq6 = mapNoise(freq6);
+    int MSGEQ7_values[MSGEQ7_NUM_BANDS];
 
-    uint8_t average = (freq0 + freq1 + freq2 + freq3 + freq4 + freq5 + freq6) / 7;
-    FastLED.setBrightness(average);
+    for (int i = 0; i < MSGEQ7_NUM_BANDS; i++) {
+        MSGEQ7_values[i] = mapNoise(MSGEQ7.get(i, 0));
+    }
+
+    for (int i = 0; i < NUM_LEDS; i++) {
+        int band = i % MSGEQ7_NUM_BANDS;
+        
+        int brightness = pow(MSGEQ7_values[band], scale_factor * bias);
+        brightness = constrain(brightness, 0, 255);
+        max_brightness = max(max_brightness, brightness);
+
+        // Now we'll set this LED to a color based on the band it's mapped to.
+        // The color_offset changes the base hue over time, leading to a color rotation effect.
+        int hue = band * (256 / MSGEQ7_NUM_BANDS) + color_offset;
+        leds[i] = CHSV(hue, 255, brightness);
+    }
+
+    // Increment the color offset for the next frame.
+    // Wrapping around when we go past 255 since hue in the HSV color space is a value between 0 and 255.
+    color_offset = fmod(color_offset + 0.5, 256.0);
+
+    frame_count++;
+    if (frame_count >= 60) {  // After 60 frames (about 1 second at 60 FPS)
+        if (max_brightness < 100) {
+            scale_factor *= 2.0;
+            bias += 0.3;
+        } else if (max_brightness > 200) {
+            scale_factor *= 0.8;
+            bias -= 0.05;
+        }
+
+        // Constrain the scale/bias factor to a reasonable range
+        scale_factor = constrain(scale_factor, 2.0, 10.0);
+        bias = constrain(bias, 1.0, 2.0);
+
+        // Reset the maximum brightness and frame count for the next period
+        max_brightness = 0;
+        frame_count = 0;
+    }
+
+    FastLED.delay(1000/FRAMES_PER_SECOND);
 }
 
 void music_bpm(){
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
     if(!new_reading) return;
 
-    uint8_t freq = get_bass_reading();
-    FastLED.setBrightness(freq);
+    set_freq_to_brightness();
     bpm();
 }
 
@@ -174,18 +187,24 @@ void music_rainbow() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
     if(!new_reading) return;
 
-    uint8_t freq = get_bass_reading();
-    FastLED.setBrightness(freq);
+    set_freq_to_brightness();
     rainbow();
 }
 
-void music_party_color() {
+void music_party_colors() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
     if(!new_reading) return;
 
-    uint8_t freq = get_bass_reading();
-    FastLED.setBrightness(freq);
+    set_freq_to_brightness();
     party_colors();
+}
+
+void music_rotate_party_colors() {
+    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
+    if(!new_reading) return;
+
+    set_freq_to_brightness();
+    rotate_party_colors();
 }
 
 void music_rgb() {
@@ -202,13 +221,4 @@ void music_rgb() {
 
     fill_solid(leds, NUM_LEDS, CRGB(freq1, freq3, freq5));
     fadeToBlackBy(leds, NUM_LEDS, 10);
-}
-
-void music_rotate_party_colors() {
-    bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
-    if(!new_reading) return;
-
-    uint8_t freq = get_bass_reading();
-    rotate_party_colors();
-    FastLED.setBrightness(freq);
 }

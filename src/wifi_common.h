@@ -8,6 +8,5 @@ void reconnect_mqtt();
 void setup_ota();
 void setup_wifi();
 void send_state();
-void ota_setup();
 
 #endif

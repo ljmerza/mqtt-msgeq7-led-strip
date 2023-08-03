@@ -36,6 +36,9 @@ void run_led_lights(){
     if (show_leds) {
         FastLED.setBrightness(brightness);
         FastLED.show();
+    } else {
+        FastLED.clear();
+        FastLED.show();
     }
 }
 

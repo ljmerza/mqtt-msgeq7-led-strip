@@ -16,7 +16,9 @@ void setup() {
     green = INITIAL_GREEN;
     blue = INITIAL_BLUE;
 
+    effect_string = INITIAL_EFFECT;
     brightness = INITIAL_BRIGHTNESS;
+
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(brightness);
 
@@ -30,7 +32,6 @@ void setup() {
     client.setServer(MQTT_SERVER, 1883);
     client.setCallback(callback);
 
-    ota_setup();
 }
 
 void loop() {
@@ -43,6 +44,8 @@ void loop() {
     if (!client.connected()) {
         Serial.println("Attempting MQTT connection...");
         reconnect_mqtt();
+        send_state();
+
     }
 
     // Process MQTT tasks
@@ -52,10 +55,11 @@ void loop() {
     ArduinoOTA.handle();
  
     if (show_leds) {
-        bool did_show = run_effect();
-        if(!did_show) {
-            FastLED.show();
-        }
+        run_effect();
+        FastLED.show();
+    } else {
+        FastLED.clear();
+        FastLED.show();
     }
 
     // Insert a delay to keep the framerate modest

@@ -31,7 +31,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     serializeJsonPretty(json_doc, Serial);
     process_json(json_doc);
-    
     set_real_colors();
 
     // send state back to mqqt to keep things in sync with UI
@@ -51,7 +50,7 @@ void set_real_colors() {
     }
 }
 
-bool run_effect(){
+void run_effect(){
     if (effect_string == "Rainbow") {
         rainbow();
     } else if (effect_string == "Rainbow With Glitter") {
@@ -70,14 +69,6 @@ bool run_effect(){
         party_colors();
     } else if (effect_string == "Rotate Party") {
         rotate_party_colors();
-    } else if (effect_string == "Music Rainbow") {
-        music_rainbow();
-    } else if (effect_string == "Music RGB") {
-        music_rgb();
-    } else if (effect_string == "Music Rotate Party") {
-        music_rotate_party_colors();
-    } else if (effect_string == "Music Cycle") {
-        music_party_color();
     } else if (effect_string == "Fire") {
         fire();
     } else if (effect_string == "Solid") {
@@ -134,20 +125,23 @@ bool run_effect(){
         heatColors_p();
     } else if (effect_string == "Twinkle") {
         twinkle();
+    
+    // music based effects
+    } else if (effect_string == "Music Rainbow") {
+        music_rainbow();
+    } else if (effect_string == "Music RGB") {
+        music_rgb();
+    } else if (effect_string == "Music Rotate Party") {
+        music_rotate_party_colors();
+    } else if (effect_string == "Music Cycle") {
+        music_party_colors();
     } else if (effect_string == "Music BPM") {
         music_bpm();
-    } else if (effect_string == "Music Volume") {
-        music_volume();
-    } else if (effect_string == "Music Average") {
-        music_average();
-    } else if (effect_string == "Music Average") {
-        music_average();
-    }else if (effect_string == "Music Lines") {
+    } else if (effect_string == "Music Lines") {
         music_lines();
-        return true;
+    } else if (effect_string == "Music 7 Channels") {
+        music_seven_channels();
     }
-
-    return false;
 }
 
 
@@ -168,7 +162,11 @@ void process_json(StaticJsonDocument<256>& json_doc) {
 
     // set brightness
     if (json_doc.containsKey("brightness")) {
-        brightness = json_doc["brightness"];
+        if(json_doc.containsKey("state") && strcmp(json_doc["state"], off_cmd) == 0) {
+            brightness = 0;
+        } else {
+            brightness = json_doc["brightness"];
+        }
         FastLED.setBrightness(brightness);
     }
 
@@ -192,5 +190,9 @@ void process_json(StaticJsonDocument<256>& json_doc) {
         color_temp = json_doc["color_temp"];
         unsigned int kelvin  = 1000000 / color_temp;
         temp2rgb(kelvin);
+    }
+
+    if (!json_doc.containsKey("color") && !json_doc.containsKey("effect") && !json_doc.containsKey("color_temp")) {
+        effect_string = "Solid";
     }
 }
