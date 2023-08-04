@@ -125,6 +125,7 @@ int max_brightness = 0;  // Variable to keep track of the maximum brightness
 int frame_count = 0;  // Counter to keep track of the number of frames
 float scale_factor = 3.0; // Initialize scale_factor
 float bias = 3; // Initialize bias
+CHSV hsvLeds[NUM_LEDS];  // add a parallel CHSV array
 
 void music_seven_channels() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
@@ -136,17 +137,25 @@ void music_seven_channels() {
         MSGEQ7_values[i] = mapNoise(MSGEQ7.get(i, 0));
     }
 
+    // MSGEQ7_values[0] = get_bass_reading();
+    // MSGEQ7_values[1] = MSGEQ7_values[0];
+    // MSGEQ7_values[2] = MSGEQ7_values[0];
+    // MSGEQ7_values[3] = get_mid_reading();
+    // MSGEQ7_values[4] = MSGEQ7_values[3];
+    // MSGEQ7_values[5] = get_treble_reading();
+    // MSGEQ7_values[6] = MSGEQ7_values[5];
+
+    fill_rainbow(hsvLeds, NUM_LEDS, color_offset, 255 / NUM_LEDS);  // fill LEDs with moving rainbow
+
     for (int i = 0; i < NUM_LEDS; i++) {
         int band = i % MSGEQ7_NUM_BANDS;
         
         int brightness = pow(MSGEQ7_values[band], scale_factor * bias);
         brightness = constrain(brightness, 0, 255);
-        max_brightness = max(max_brightness, brightness);
 
-        // Now we'll set this LED to a color based on the band it's mapped to.
-        // The color_offset changes the base hue over time, leading to a color rotation effect.
-        int hue = band * (256 / MSGEQ7_NUM_BANDS) + color_offset;
-        leds[i] = CHSV(hue, 255, brightness);
+        hsvLeds[i].value = brightness; // adjust the brightness
+        leds[i] = hsvLeds[i]; // convert CHSV to CRGB
+        max_brightness = max(max_brightness, brightness);
     }
 
     // Increment the color offset for the next frame.
@@ -154,20 +163,18 @@ void music_seven_channels() {
     color_offset = fmod(color_offset + 0.5, 256.0);
 
     frame_count++;
-    if (frame_count >= 60) {  // After 60 frames (about 1 second at 60 FPS)
+    if (frame_count >= 60) {
         if (max_brightness < 100) {
-            scale_factor *= 2.0;
-            bias += 0.3;
+            scale_factor *= 1.5;
+            bias += 0.15;
         } else if (max_brightness > 200) {
-            scale_factor *= 0.8;
-            bias -= 0.05;
+            scale_factor *= 0.85;
+            bias -= 0.1;
         }
 
-        // Constrain the scale/bias factor to a reasonable range
-        scale_factor = constrain(scale_factor, 2.0, 10.0);
+        scale_factor = constrain(scale_factor, 1.0, 5.0);
         bias = constrain(bias, 1.0, 2.0);
 
-        // Reset the maximum brightness and frame count for the next period
         max_brightness = 0;
         frame_count = 0;
     }
