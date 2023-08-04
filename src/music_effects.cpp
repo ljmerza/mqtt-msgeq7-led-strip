@@ -119,13 +119,15 @@ void music_lines() {
 }
 
 
-#define FRAMES_PER_SECOND 120
-float color_offset = 0; // variable to keep track of the color offset
 int max_brightness = 0;  // Variable to keep track of the maximum brightness
 int frame_count = 0;  // Counter to keep track of the number of frames
-float scale_factor = 3.0; // Initialize scale_factor
-float bias = 3; // Initialize bias
+float scale_factor = 1.0; // Initialize scale_factor
+float bias = 1; // Initialize bias
 CHSV hsvLeds[NUM_LEDS];  // add a parallel CHSV array
+
+// Function to map the noise value to a brightness value
+#define READING_FUNCTIONS 3
+uint8_t (*get_reading_functions[READING_FUNCTIONS])() = {get_bass_reading, get_mid_reading, get_treble_reading};
 
 void music_seven_channels() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
@@ -133,19 +135,11 @@ void music_seven_channels() {
 
     int MSGEQ7_values[MSGEQ7_NUM_BANDS];
 
-    for (int i = 0; i < MSGEQ7_NUM_BANDS; i++) {
-        MSGEQ7_values[i] = mapNoise(MSGEQ7.get(i, 0));
+    for (int i = 0; i < 7; ++i) {
+        MSGEQ7_values[i] = get_reading_functions[i % READING_FUNCTIONS]();
     }
 
-    // MSGEQ7_values[0] = get_bass_reading();
-    // MSGEQ7_values[1] = MSGEQ7_values[0];
-    // MSGEQ7_values[2] = MSGEQ7_values[0];
-    // MSGEQ7_values[3] = get_mid_reading();
-    // MSGEQ7_values[4] = MSGEQ7_values[3];
-    // MSGEQ7_values[5] = get_treble_reading();
-    // MSGEQ7_values[6] = MSGEQ7_values[5];
-
-    fill_rainbow(hsvLeds, NUM_LEDS, color_offset, 255 / NUM_LEDS);  // fill LEDs with moving rainbow
+    fill_rainbow(hsvLeds, NUM_LEDS, gHue, 10);  // fill LEDs with moving rainbow
 
     for (int i = 0; i < NUM_LEDS; i++) {
         int band = i % MSGEQ7_NUM_BANDS;
@@ -158,28 +152,23 @@ void music_seven_channels() {
         max_brightness = max(max_brightness, brightness);
     }
 
-    // Increment the color offset for the next frame.
-    // Wrapping around when we go past 255 since hue in the HSV color space is a value between 0 and 255.
-    color_offset = fmod(color_offset + 0.5, 256.0);
-
     frame_count++;
+    // Every 60 frames, adjust the scale_factor and bias to keep the brightness thresholds from moving too quickly.
     if (frame_count >= 60) {
         if (max_brightness < 100) {
             scale_factor *= 1.5;
             bias += 0.15;
-        } else if (max_brightness > 200) {
+        } else if (max_brightness > 250) {
             scale_factor *= 0.85;
             bias -= 0.1;
         }
 
-        scale_factor = constrain(scale_factor, 1.0, 5.0);
+        scale_factor = constrain(scale_factor, 1.05, 5.0);
         bias = constrain(bias, 1.0, 2.0);
 
         max_brightness = 0;
         frame_count = 0;
     }
-
-    FastLED.delay(1000/FRAMES_PER_SECOND);
 }
 
 void music_bpm(){
