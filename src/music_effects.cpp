@@ -126,8 +126,8 @@ float bias = 1; // Initialize bias
 CHSV hsvLeds[NUM_LEDS];  // add a parallel CHSV array
 
 // Function to map the noise value to a brightness value
-#define READING_FUNCTIONS 3
-uint8_t (*get_reading_functions[READING_FUNCTIONS])() = {get_bass_reading, get_mid_reading, get_treble_reading};
+#define READING_FUNCTIONS 2
+uint8_t (*get_reading_functions[READING_FUNCTIONS])() = {get_bass_reading, get_mid_reading};
 
 void music_seven_channels() {
     bool new_reading = MSGEQ7.read(MSGEQ7_INTERVAL);
@@ -163,7 +163,7 @@ void music_seven_channels() {
             bias -= 0.1;
         }
 
-        scale_factor = constrain(scale_factor, 1.05, 5.0);
+        scale_factor = constrain(scale_factor, 1.1, 5.0);
         bias = constrain(bias, 1.0, 2.0);
 
         max_brightness = 0;
