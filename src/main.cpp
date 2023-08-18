@@ -53,7 +53,7 @@ void loop() {
 
     // Handle OTA
     ArduinoOTA.handle();
- 
+
     if (show_leds) {
         run_effect();
         FastLED.show();

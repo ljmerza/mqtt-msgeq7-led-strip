@@ -121,7 +121,7 @@ void music_lines() {
 
 int max_brightness = 0;  // Variable to keep track of the maximum brightness
 int frame_count = 0;  // Counter to keep track of the number of frames
-float scale_factor = 1.0; // Initialize scale_factor
+float scale_factor = 1.02; // Initialize scale_factor
 float bias = 1; // Initialize bias
 CHSV hsvLeds[NUM_LEDS];  // add a parallel CHSV array
 
@@ -155,16 +155,22 @@ void music_seven_channels() {
     frame_count++;
     // Every 60 frames, adjust the scale_factor and bias to keep the brightness thresholds from moving too quickly.
     if (frame_count >= 60) {
+        // Serial.print(max_brightness);
+        // Serial.print(" ");
+        // Serial.print(scale_factor);
+        // Serial.print(" ");
+        // Serial.println(bias);
+
         if (max_brightness < 100) {
-            scale_factor *= 1.5;
-            bias += 0.15;
+            scale_factor *= 1.15;
+            bias += 0.5;
         } else if (max_brightness > 250) {
             scale_factor *= 0.85;
-            bias -= 0.1;
+            bias -= 0.05;
         }
 
-        scale_factor = constrain(scale_factor, 1.1, 5.0);
-        bias = constrain(bias, 1.0, 2.0);
+        scale_factor = constrain(scale_factor, 1.02, 1.5);
+        bias = constrain(bias, 1.0, 1.5);
 
         max_brightness = 0;
         frame_count = 0;

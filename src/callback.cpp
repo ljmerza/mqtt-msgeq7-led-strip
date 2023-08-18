@@ -191,8 +191,4 @@ void process_json(StaticJsonDocument<256>& json_doc) {
         unsigned int kelvin  = 1000000 / color_temp;
         temp2rgb(kelvin);
     }
-
-    if (!json_doc.containsKey("color") && !json_doc.containsKey("effect") && !json_doc.containsKey("color_temp")) {
-        effect_string = "Solid";
-    }
 }
